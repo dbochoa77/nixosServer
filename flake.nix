@@ -24,7 +24,7 @@
     in {
       packages = 
         forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-      overlays = import ./overlays {inherit inputs outputs;};
+      overlays = import ./overlays {inherit inputs;};
       nixosConfiguration = {
         nixosServer = nixpkgs.lib.nixosSystem {
 	  specialArgs = {inherit inputs outputs;};
