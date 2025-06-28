@@ -2,11 +2,12 @@
   description = "Configuration for Nixos Server";
 
   inputs = {
-    home-manager = {
-	url = "github:nix-community/home-manager";
-	inputs.nixpkgs.follows="nixpkgs";
-    };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+#    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flakes-utils.url = "github:numtide/flake-utils";
+    home-manager.url = "github:nix-community/home-manager";
+#	inputs.nixpkgs.follows="nixpkgs";
+  
   };
 
     outputs = { 
