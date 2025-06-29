@@ -1,12 +1,12 @@
 { config, lib, pkgs, ... }:
 
 {
-  home.username - lib.mkDefault "dbochoa77";
-  home.homeDirecotry = lib.mkDefault "/home/${config.home.username}";
+  home.username = lib.mkDefault "dbochoa77";
+  home.homeDirectory = lib.mkDefault "/home/${config.home.username}";
 
-  home.stateVerision = "24.05";
+  home.stateVersion = "24.05";
 
-  home.packages [
+  home.packages = [
   ];
 
   home.file = {
