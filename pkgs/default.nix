@@ -1,6 +1,5 @@
-{ pkgs }:
+{ pkgs, ... }:
 
 {
-  my-hello = pkgs.hello;
 
 }

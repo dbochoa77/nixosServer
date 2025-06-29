@@ -1,18 +1,18 @@
 {
   description = "Configuration for Nixos Server";
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
-#    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flakes-utils.url = "github:numtide/flake-utils";
-    home-manager.url = "github:nix-community/home-manager";
-#	inputs.nixpkgs.follows="nixpkgs";
-  
+ inputs = {
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
   };
 
-    outputs = { 
+  outputs = { 
 	self, 
-	home-manager, 
+	home-manager,
 	nixpkgs,
 	...
     } @ inputs: let
@@ -21,11 +21,14 @@
         "x86_64-linux"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
-    in {
-      packages = 
-        forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-      overlays = import ./overlays {inherit inputs;};
-      nixosConfiguration = {
+  
+  in {
+    packages =
+      forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    overlays = import ./overlays {inherit inputs;};
+
+
+    nixosConfigurations = {
         nixosServer = nixpkgs.lib.nixosSystem {
 	  specialArgs = {inherit inputs outputs;};
 	  modules = [./hosts/nixosServer];
@@ -35,7 +38,7 @@
         "nixosServer@nixosServer" = home-manager.lib.homeManagerConfiguration {
 	  pkgs = nixpkgs.legacyPackages."x86_64-linux";
 	  extraSpecialArgs = {inherit inputs outputs;};
-	  modules = [./home/dbochoa77/nixosSever.nix];
+	  modules = [./home/dbochoa77/nixosServer.nix];
 	};
       };
     };

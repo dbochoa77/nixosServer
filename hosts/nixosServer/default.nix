@@ -1,8 +1,12 @@
+{ config, inputs, outputs, lib, pkgs, ... }:
+
 {
  imports = [
-   ./harware-configuration.nix
+   ./hardware-configuration.nix
    inputs.home-manager.nixosModules.home-manager
 ];
+
+networking.hostName = "nixosServer";
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.dbochoa77 = {
@@ -12,13 +16,10 @@
   };
 
 home-manager = {
-  userUserPackages = true;
+  useUserPackages = true;
   extraSpecialArgs = { inherit inputs outputs; };
   users.dbochoa77 = 
-    import ../../home/dbochoa77/${config.networkingi.hostName}.nix;
-  };
+  import ../../home/nixosServer/dbochoa77.nix; 
 
-networking.hostName = "nixosServer";
-{
-  imports = [../dbochoa77 ./configuration.nix];
+  }; 
 }
