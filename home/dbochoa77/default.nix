@@ -5,7 +5,13 @@
   pkgs,
   ...
 }: {
-  nixpkgs = {
+ 
+    home.stateVersion = "24.11";
+    home.username = "dbochoa77";
+    home.homeDirectory = "/home/dbochoa77";
+
+
+    nixpkgs = {
     # Overlays
     overlays = [
     outputs.overlays.additions

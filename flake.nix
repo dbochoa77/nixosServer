@@ -31,14 +31,16 @@
     nixosConfigurations = {
         nixosServer = nixpkgs.lib.nixosSystem {
 	  specialArgs = {inherit inputs outputs;};
-	  modules = [./hosts/nixosServer];
+	  modules = [./hosts/nixosServer/configuration.nix
+		     ./hosts/nixosServer/hardware-configuration.nix
+	  ];
 	};
       };
       homeConfigurations = { 
         "nixosServer@nixosServer" = home-manager.lib.homeManagerConfiguration {
 	  pkgs = nixpkgs.legacyPackages."x86_64-linux";
 	  extraSpecialArgs = {inherit inputs outputs;};
-	  modules = [./home/dbochoa77/nixosServer.nix];
+	  modules = [./home/dbochoa77/default.nix];
 	};
       };
     };

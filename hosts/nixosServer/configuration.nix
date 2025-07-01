@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -6,11 +6,16 @@
       ./hardware-configuration.nix
     ];
 
-  # Bootloader.
-  boot.loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
+boot.loader = {
+  systemd-boot.enable = false;
+  grub = {
+    enable = true;
+    efiSupport = true;
+    devices = [ "nodev" ]; # for UEFI systems
   };
+  efi.canTouchEfiVariables = true;
+};
+
 
   # Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -94,9 +99,9 @@
   openssl
 
   # ------ Jellyfin -------
-  pkgs.jellyfin
-  pkgs.jellyfin-web
-  pkgs.jellyfin-ffmpeg
+  jellyfin
+  jellyfin-web
+  jellyfin-ffmpeg
  
   # ────── Web & Containers ──────
   nginx
@@ -143,6 +148,6 @@
    };
 
   # System State Version
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "25.11"; # Did you read the comment?
 
 }
