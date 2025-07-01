@@ -7,6 +7,8 @@
   home.stateVersion = "24.05";
 
   home.packages = [
+  pkgs.cowsay
+
   ];
 
   home.file = {
