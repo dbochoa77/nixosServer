@@ -1,1 +1,7 @@
-{ config, ... }: { imports = [ ./home.nix ../dbochoa77 ]; }
+{ config, ... }: { 
+  imports = [ 
+    ../dbochoa77
+    ../features/cli
+    ./home.nix
+    ]; 
+}

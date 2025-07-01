@@ -9,9 +9,6 @@
   home.packages = with pkgs; [
 
     # ────── Core Utilities ──────
-    htop
-    btop
-    tmux
     rsync
     neovim
     vim
