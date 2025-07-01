@@ -37,10 +37,10 @@
 	};
       };
       homeConfigurations = { 
-        "nixosServer@nixosServer" = home-manager.lib.homeManagerConfiguration {
+        "nixosServer" = home-manager.lib.homeManagerConfiguration {
 	  pkgs = nixpkgs.legacyPackages."x86_64-linux";
 	  extraSpecialArgs = {inherit inputs outputs;};
-	  modules = [./home/dbochoa77/default.nix];
+	  modules = [./home/nixosServer/home.nix];
 	};
       };
     };
