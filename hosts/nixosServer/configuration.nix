@@ -62,83 +62,44 @@ boot.loader = {
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-  
-  # ────── Core Utilities ──────
-  htop
-  btop
-  tmux
-  rsync
-  ripgrep
-  fd
-  ncdu
-  bash-completion
-  file
-  neovim
-  vim 
-  fastfetch
 
-  # ────── File Sync / Backup ──────
-  rclone
-  borgbackup
-  restic
-  syncthing
+    # ────── Security ──────
+    nftables
+    fail2ban
+    gnupg
+    openssl
 
-  # ────── Networking ──────
-  openssh
-  mosh
-  nmap
-  iproute2
-  wget
-  curl
-  inetutils
+    # ------ Jellyfin -------
+    jellyfin
+    jellyfin-web
+    jellyfin-ffmpeg
 
-  # ────── Security ──────
-  nftables
-  fail2ban
-  gnupg
-  openssl
+    # ────── Web & Containers ──────
+    nginx
+    caddy
+    docker
+    docker-compose
+    podman
+    traefik
 
-  # ------ Jellyfin -------
-  jellyfin
-  jellyfin-web
-  jellyfin-ffmpeg
- 
-  # ────── Web & Containers ──────
-  nginx
-  caddy
-  docker
-  docker-compose
-  podman
-  traefik
+    # ────── Monitoring & Logging ──────
+    prometheus
+    grafana
+    uptime-kuma
+    glances
+    logrotate
 
-  # ────── Monitoring & Logging ──────
-  prometheus
-  grafana
-  uptime-kuma
-  glances
-  logrotate
+    # ────── Virtualization ──────
+    qemu
+    libvirt
+    virt-manager
+    vagrant
+    spice-vdagent
 
-  # ────── DevOps & Automation ──────
-  git
-  ansible
-  nixfmt-classic
-  direnv
-  nix-index
-  home-manager
+    # ────── NixOS Tools ──────
+    home-manager
 
-  # ────── Virtualization ──────
-  qemu
-  libvirt
-  virt-manager
-  vagrant
-  spice-vdagent
-
-  # ────── NixOS Tools ──────
-  nvd
-  nix-output-monitor
-  nix-tree
-
-  ];
+    ];
 
   # Enable the OpenSSH daemon.
    services.openssh = {
