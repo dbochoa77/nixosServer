@@ -1,0 +1,19 @@
+# Ignore logs
+*.log
+.nvimlog
+
+# Ignore lock files if you don’t want them
+# flake.lock
+
+# Ignore backup files
+*~
+*.swp
+
+# Ignore custom/private modules
+hosts/**/private.nix
+home/**/private.nix
+
+# Ignore secrets if you ever generate any
+secrets/
+*.key
+*.pem
