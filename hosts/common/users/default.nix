@@ -1,4 +1,4 @@
 {
-  imports = [./m3tam3re.nix];
+  imports = [./nixosServer.nix];
 }
 
