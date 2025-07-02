@@ -7,8 +7,7 @@
 
   features = {
     cli = {
-    fish.enable = true;
-    fastfetch.enble = true;
+    fastfetch.enable = true;
     };
   };
 }

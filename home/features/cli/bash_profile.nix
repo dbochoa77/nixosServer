@@ -1,7 +1,7 @@
  { config, lib, pkgs, ... }:
 
 {
-  programs.bash.loginShellInit = ''
+  programs.bash.initExtra = ''
     fastfetch
   '';
 }
