@@ -5,3 +5,10 @@
     ./home.nix
     ]; 
 }
+
+  features = {
+    cli = { 
+      fish.enable = true;
+    };
+  };
+}

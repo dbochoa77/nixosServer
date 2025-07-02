@@ -1,4 +1,7 @@
 {pkgs, ...}: {
+    imports = [
+    ./alias.nix
+    ];
 
   home.packages = with pkgs; [
     coreutils 

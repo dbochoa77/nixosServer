@@ -6,7 +6,7 @@
   ...
 }: {
  
-    home.stateVersion = "24.11";
+    home.stateVersion = "24.05";
     home.username = "dbochoa77";
     home.homeDirectory = "/home/dbochoa77";
 
