@@ -34,7 +34,8 @@
     nvd
     nix-output-monitor
     nix-tree
-
+    
+    cowsay
   ];
 
   home.file = {

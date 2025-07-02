@@ -99,6 +99,12 @@ boot.loader = {
     # ────── NixOS Tools ──────
     home-manager
 
+    # ------ Developer Tools -----
+    gcc
+    clang
+    gnumake
+    pkg-config    
+
     ];
 
   # Enable the OpenSSH daemon.
