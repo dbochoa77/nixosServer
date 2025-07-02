@@ -8,10 +8,16 @@
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    
+    dotfiles = {
+    url = "https://github.com/dbochoa77/Neovim";
+    flake = false;
+    };
   };
 
   outputs = { 
 	self, 
+	dotfiles,
 	home-manager,
 	nixpkgs,
 	...

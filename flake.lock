@@ -1,5 +1,17 @@
 {
   "nodes": {
+    "dotfiles": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-zvRdoXPoPHq2xpoquts7iDKKUPvZuKGtLsJRPEAnlso=",
+        "type": "file",
+        "url": "https://github.com/dbochoa77/Neovim"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/dbochoa77/Neovim"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -54,6 +66,7 @@
     },
     "root": {
       "inputs": {
+        "dotfiles": "dotfiles",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nixpkgs-stable": "nixpkgs-stable"

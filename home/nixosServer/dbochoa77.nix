@@ -3,7 +3,8 @@
     ../dbochoa77
     ../features/cli
     ./home.nix
-    ]; 
+    ./dotfiles
+  ]; 
 
   features = {
     cli = {
