@@ -12,9 +12,17 @@
       c = "clear";
       h = "history";
       now = "date +%T";
-      ls = "eza";
       grep = "rg";
       ps = "procs";
+      top = "htop";
+      df = "df -h";
+      du = "du -sh";
+      t = "tree -L 2";
+
+      # File Listing
+      ls = "eza -a --icons --git";
+      la = "exa -la --icons --git";
+      lt = "eza -T --git-ignore --icons";
   
       # Directory movement
       mkdir = "mkdir -p";
@@ -36,6 +44,16 @@
       # Neovim (root)
       v = "sudo -E nvim";
      };
+     
+    initExtra = ''    
+      cd() {
+        builtin cd "$@" && eza -1A --color=auto;
+      }
+      
+      fastfetch
+      ls -d -- * .*
+    '';
+
   };
 }
 
