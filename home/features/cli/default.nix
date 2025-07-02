@@ -1,7 +1,9 @@
 {pkgs, ...}: {
     imports = [
     ./alias.nix
+    ./fastfetch.nix
     ];
+
 
   programs.eza = {
     enable = true;
