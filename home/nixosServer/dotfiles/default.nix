@@ -5,7 +5,7 @@
 
 {
 home.file.".config/nvim" = { 
-    source = "${inputs.dotfiles}/nvim";
+    source = inputs.dotfiles;
     recursive = true;
   };
 }
