@@ -10,7 +10,7 @@
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     
     dotfiles = {
-    url = "https://github.com/dbochoa77/nvim.git";
+    url = "https://github.com/dbochoa77/nvim?ref=main";
     flake = false;
     };
   };
