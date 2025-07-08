@@ -3,13 +3,13 @@
     "dotfiles": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-GQeyE3y1o24CpQXEASETreREtvzgTj85JlxZCtqv7bY=",
+        "narHash": "sha256-lYDkKxBiEolykMhJr6qebNhrQX5nZ5abFPfj74lUJ90=",
         "type": "file",
-        "url": "https://github.com/dbochoa77/nvim?ref=main"
+        "url": "https://github.com/dbochoa77/nvim.git"
       },
       "original": {
         "type": "file",
-        "url": "https://github.com/dbochoa77/nvim?ref=main"
+        "url": "https://github.com/dbochoa77/nvim.git"
       }
     },
     "home-manager": {
