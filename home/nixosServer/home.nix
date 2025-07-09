@@ -36,6 +36,10 @@
     nix-tree
     
     cowsay
+
+    # Dev Tools
+    nodejs
+    unzip
   ];
 
   home.file = {
