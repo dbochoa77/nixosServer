@@ -3,12 +3,16 @@
     "dotfiles": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-lYDkKxBiEolykMhJr6qebNhrQX5nZ5abFPfj74lUJ90=",
-        "type": "file",
+        "lastModified": 1752018499,
+        "narHash": "sha256-UzDfqXYSskgF+YN+fN5x11PtKksBNtrSmgt6gKskDxE=",
+        "ref": "refs/heads/main",
+        "rev": "a7e4974e17d2633a3e788962f8ec385bd87c2d5f",
+        "revCount": 3,
+        "type": "git",
         "url": "https://github.com/dbochoa77/nvim.git"
       },
       "original": {
-        "type": "file",
+        "type": "git",
         "url": "https://github.com/dbochoa77/nvim.git"
       }
     },
