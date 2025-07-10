@@ -41,8 +41,10 @@
     nixosConfigurations = {
         nixosServer = nixpkgs.lib.nixosSystem {
 	  specialArgs = {inherit inputs outputs;};
-	  modules = [./hosts/nixosServer/configuration.nix
-		     ./hosts/nixosServer/hardware-configuration.nix
+	  modules = [
+            { networking.hostName = hostName; }
+	    ./hosts/${hosts}/configuration.nix
+	    #		     ./hosts/nixosServer/hardware-configuration.nix
 	  ];
 	};
       };
