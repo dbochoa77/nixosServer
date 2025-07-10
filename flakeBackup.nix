@@ -31,16 +31,15 @@
         "x86_64-darwin"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
-      host = builtins.getEnv "HOSTNAME"; 
   
- in {
+  in {
     packages =
       forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
     overlays = import ./overlays {inherit inputs;};
 
 
     nixosConfigurations = {
-        "${host}" = nixpkgs.lib.nixosSystem {
+        nixosServer = nixpkgs.lib.nixosSystem {
 	  specialArgs = {inherit inputs outputs;};
 	  modules = [
 	    ./hosts/nixosServer/configuration.nix
