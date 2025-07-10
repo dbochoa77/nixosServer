@@ -8,7 +8,12 @@
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
-    
+ 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     dotfiles = {
     url = "git+https://github.com/dbochoa77/nvim.git";
     flake = false;
@@ -17,6 +22,7 @@
 
   outputs = { 
 	self, 
+        disko,
 	dotfiles,
 	home-manager,
 	nixpkgs,
@@ -48,6 +54,7 @@
 	  specialArgs = {inherit inputs outputs;};
 	  modules = [
 	    ./hosts/${host}/configuration.nix
+	    inputs.disko.nixosModules.disko
 	  ];
 	};
       };
