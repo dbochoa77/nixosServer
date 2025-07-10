@@ -104,6 +104,13 @@ boot.loader = {
     clang
     gnumake
     pkg-config    
+    
+    nodejs  
+    python3
+    clang-tools
+    prisma
+    tailwindcss
+    svelte-language-server
 
     ];
 
