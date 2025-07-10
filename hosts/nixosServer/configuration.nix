@@ -6,6 +6,7 @@
       ./hardware-configuration.nix
       ./disko-config.nix
     ];
+ disko.enableConfig = true;
 
 boot.loader = {
   systemd-boot.enable = false;
