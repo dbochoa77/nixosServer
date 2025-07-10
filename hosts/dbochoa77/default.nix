@@ -35,7 +35,7 @@
       experimental-features = "nix-command flakes";
       trusted-users = [
         "root"
-	"dbochoa77"
+	"${user}"
       ];
     };
     gc = {
@@ -46,7 +46,7 @@
     registry = 
       (lib.mapAttrs (_: flake: {inherit flake;}))
       ((lib.filterAttrs (_: lib.isType "flake")) inputs);
-    nixPath = ["/nixosServer-config"];
+    nixPath = ["/${host}-config"];
   };
 }
 

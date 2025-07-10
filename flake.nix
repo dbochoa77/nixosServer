@@ -31,8 +31,12 @@
         "x86_64-darwin"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
-      host = builtins.getEnv "HOSTNAME"; 
-  
+      
+
+      # UPDATE THESE WITH YOUR HOST/USER
+      host = "nixosServer"; 
+      user = "dbochoa77";  
+
  in {
     packages =
       forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
@@ -43,16 +47,15 @@
         "${host}" = nixpkgs.lib.nixosSystem {
 	  specialArgs = {inherit inputs outputs;};
 	  modules = [
-	    ./hosts/nixosServer/configuration.nix
-	    #		     ./hosts/nixosServer/hardware-configuration.nix
+	    ./hosts/${host}/configuration.nix
 	  ];
 	};
       };
       homeConfigurations = { 
-        "nixosServer" = home-manager.lib.homeManagerConfiguration {
+        "${host}" = home-manager.lib.homeManagerConfiguration {
 	  pkgs = nixpkgs.legacyPackages."x86_64-linux";
 	  extraSpecialArgs = {inherit inputs outputs;};
-	  modules = [./home/nixosServer/dbochoa77.nix];
+	  modules = [./home/${host}/${user}.nix];
 	};
       };
     };
