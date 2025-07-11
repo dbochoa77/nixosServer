@@ -5,7 +5,7 @@
     #./hardware-configuration.nix
    ../dbochoa77
    ./configuration.nix
-   ./services
+   ./services/default.nix
     #inputs.home-manager.nixosModules.home-manager
 ];
 

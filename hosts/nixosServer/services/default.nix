@@ -1,6 +1,6 @@
 {
   imports = [
-    ./containers
+    ./containers/default.nix
   ];
 }
 
