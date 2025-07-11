@@ -1,5 +1,15 @@
-{pkgs, ... }:
-{
+{ 
+  config,
+  pkgs, 
+  pkgs,
+  ... 
+}:
+with lib; let
+  cfg = config.extraServices.podman;
+in {
+  options.extraServices.podman.enable = mkEnableOption "enable podman";
+  
+  config = mkIf cfg.enable {
   virtualisation = {
     podman = {
       enable = true;
@@ -24,5 +34,6 @@
     podman-tui # status of containers in the terminal
     docker-compose # start group of containers for dev
     #podman-compose # start group of containers for dev
-  ];
+    ];
+  };
 }
