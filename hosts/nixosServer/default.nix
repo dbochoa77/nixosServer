@@ -21,5 +21,6 @@ home-manager = {
   users.dbochoa77 = 
   import ../../home/nixosServer/dbochoa77.nix; 
 
+  extraServices.podman.enable = false;
   }; 
 }
