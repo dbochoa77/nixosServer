@@ -1,4 +1,4 @@
-{pkgs, ... } 
+{pkgs, ... }:
 {
   virtualisation = {
     podman = {
@@ -15,10 +15,14 @@
 	  "--filter=label!=important"
 	];
       };
-      defaultnetwork.settings.dns_enabled = true;
+      defaultNetwork.settings.dns_enabled = true;
     };
   };
-  enviroment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     podman-compose
-  ]
+    dive # look into docker image layers
+    podman-tui # status of containers in the terminal
+    docker-compose # start group of containers for dev
+    #podman-compose # start group of containers for dev
+  ];
 }
