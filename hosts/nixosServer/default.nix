@@ -2,9 +2,14 @@
 
 {
  imports = [
-   ./hardware-configuration.nix
-   inputs.home-manager.nixosModules.home-manager
+    #./hardware-configuration.nix
+   ../dbochoa77
+   ./configuration.nix
+   ./services
+    #inputs.home-manager.nixosModules.home-manager
 ];
+
+extraServices.podman.enable = true;
 
 networking.hostName = "nixosServer";
 
@@ -19,8 +24,6 @@ home-manager = {
   useUserPackages = true;
   extraSpecialArgs = { inherit inputs outputs; };
   users.dbochoa77 = 
-  import ../../home/nixosServer/dbochoa77.nix; 
-
-  extraServices.podman.enable = false;
-  }; 
+  import ../../home/nixosServer/dbochoa77.nix;  
+ }; 
 }
