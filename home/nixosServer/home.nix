@@ -40,6 +40,9 @@
     # Dev Tools
     nodejs
     unzip
+
+    # Browser
+    librewolf
   ];
 
   home.file = {

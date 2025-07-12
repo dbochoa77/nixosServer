@@ -1,6 +1,7 @@
 {
   imports = [
-    ./containers/default.nix
+    ./containers
+    ./virtualization/qemu-kvm.nix
   ];
 }
 

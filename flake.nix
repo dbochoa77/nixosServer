@@ -8,12 +8,14 @@
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
- 
+
+    # For making declaritive partions
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # My Neovim configurtion for homemanager
     dotfiles = {
     url = "git+https://github.com/dbochoa77/nvim.git";
     flake = false;
@@ -32,14 +34,12 @@
       systems = [
         "x86_64-linux"
 	"i686-linux"
-        "x86_64-linux"
         "aarch64-darwin"
         "x86_64-darwin"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
-      
 
-      # UPDATE THESE WITH YOUR HOST/USER
+      # Host and User Name 
       host = "nixosServer"; 
       user = "dbochoa77";  
 
@@ -60,7 +60,7 @@
       };
       homeConfigurations = { 
         "${host}" = home-manager.lib.homeManagerConfiguration {
-	  pkgs = nixpkgs.legacyPackages."x86_64-linux";
+	  pkgs = nixpkgs.legacyPackages.${systems};
 	  extraSpecialArgs = {inherit inputs outputs;};
 	  modules = [./home/${host}/${user}.nix];
 	};

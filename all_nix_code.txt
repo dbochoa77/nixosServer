@@ -1,0 +1,709 @@
+{
+  description = "Configuration for Nixos Server";
+
+ inputs = {
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+ 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    dotfiles = {
+    url = "git+https://github.com/dbochoa77/nvim.git";
+    flake = false;
+    };
+  };
+
+  outputs = { 
+	self, 
+        disko,
+	dotfiles,
+	home-manager,
+	nixpkgs,
+	...
+    } @ inputs: let
+      inherit (self) outputs;
+      systems = [
+        "x86_64-linux"
+	"i686-linux"
+        "x86_64-linux"
+        "aarch64-darwin"
+        "x86_64-darwin"
+      ];
+      forAllSystems = nixpkgs.lib.genAttrs systems;
+      
+
+      # UPDATE THESE WITH YOUR HOST/USER
+      host = "nixosServer"; 
+      user = "dbochoa77";  
+
+ in {
+    packages =
+      forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    overlays = import ./overlays {inherit inputs;};
+
+
+    nixosConfigurations = {
+        "${host}" = nixpkgs.lib.nixosSystem {
+	  specialArgs = {inherit inputs outputs;};
+	  modules = [
+	    ./hosts/${host}/configuration.nix
+	    inputs.disko.nixosModules.disko
+	  ];
+	};
+      };
+      homeConfigurations = { 
+        "${host}" = home-manager.lib.homeManagerConfiguration {
+	  pkgs = nixpkgs.legacyPackages."x86_64-linux";
+	  extraSpecialArgs = {inherit inputs outputs;};
+	  modules = [./home/${host}/${user}.nix];
+	};
+      };
+    };
+} 
+{ 
+   config, 
+   pkgs, 
+   inputs,
+   ...
+}: { 
+  users.users.${user} = {
+    isNormalUser = true;
+    description = "username";
+    extraGroups = [ "media" "networkmanager" "wheel" "docker" ];
+ 
+    packages = [inputs.home-manager.packages.${pkgs.system}.default];
+  };
+  home-manager.users.${user} =
+    import ../../../home/${user}/${config.networking.hostName}.nix;
+ }
+{
+  imports = [./${host}.nix];
+}
+
+{
+  imports = [
+    ./podman.nix
+  ];
+}
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.extraServices.podman;
+in {
+  options.extraServices.podman.enable = mkEnableOption "enable podman";
+
+  config = mkIf cfg.enable {
+    virtualisation = {
+      podman = {
+        enable = true;
+        dockerCompat = true;
+        autoPrune = {
+          enable = true;
+          dates = "weekly";
+          flags = [
+            "--filter=until=24h"
+            "--filter=label!=important"
+          ];
+        };
+        defaultNetwork.settings.dns_enabled = true;
+      };
+    };
+    environment.systemPackages = with pkgs; [
+      podman-compose
+    ];
+  };
+}
+
+{
+  lib,
+  pkgs,
+  inputs,
+  outputs,
+  ...
+}: {
+
+  imports = [
+	./extraServices
+	./users 
+	inputs.home-manager.nixosModules.home-manager
+  ];
+  home-manager = { 
+    useUserPackages = true;
+    extraSpecialArgs = {inherit inputs outputs};
+  };
+
+  nixpkgs = {
+ 
+    overlays = [
+
+      outputs.overlays.additions
+      outputs.overlays.modifications
+      outputs.overlays.stable-packages
+
+    ];
+
+    config = {
+      allowUnfree = true;
+    };
+  };
+
+  nix = { 
+    settings = {
+      experimental-features = "nix-command flakes";
+      trusted-users = [
+        "root"
+	"${user}"
+      ];
+    };
+    gc = {
+      automatic = true; 
+      options = "--delete-older-than 30d";
+    };
+    optimise.automatic = true;
+    registry = 
+      (lib.mapAttrs (_: flake: {inherit flake;}))
+      ((lib.filterAttrs (_: lib.isType "flake")) inputs);
+    nixPath = ["/${host}-config"];
+  };
+}
+
+{config, pkgs, lib, ... }:
+
+{
+  imports =
+    [
+      ./hardware-configuration.nix
+      #./disko-config.nix
+    ];
+ disko.enableConfig = true;
+
+boot.loader = {
+  systemd-boot.enable = false;
+  grub = {
+    enable = true;
+    efiSupport = true;
+    devices = [ "nodev" ]; # for UEFI systems
+  };
+  efi.canTouchEfiVariables = true;
+};
+
+
+  # Flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.trusted-users = [ "root" "dbochoa77" ];
+
+  # Hostname
+  networking.hostName = "nixosServer"; # Define your hostname.
+
+  # Enable networking
+  networking.networkmanager.enable = true;
+
+  # Set your time zone.
+  time.timeZone = "America/Los_Angeles";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
+  };
+
+  # Configure keymap in X11
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.dbochoa77 = {
+    isNormalUser = true;
+    description = "dbochoa77";
+    extraGroups = [ "media" "networkmanager" "wheel" "docker" ];
+  };
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
+  environment.systemPackages = with pkgs; [
+
+    # ────── Security ──────
+    nftables
+    fail2ban
+    gnupg
+    openssl
+
+    # ------ Jellyfin -------
+    jellyfin
+    jellyfin-web
+    jellyfin-ffmpeg
+
+    # ────── Web & Containers ──────
+    nginx
+    caddy
+    docker
+    docker-compose
+    podman
+    traefik
+
+    # ────── Monitoring & Logging ──────
+    prometheus
+    grafana
+    uptime-kuma
+    glances
+    logrotate
+
+    # ────── Virtualization ──────
+    qemu
+    libvirt
+    virt-manager
+    vagrant
+    spice-vdagent
+
+    # ────── NixOS Tools ──────
+    home-manager
+
+    # ------ Developer Tools -----
+    gcc
+    clang
+    gnumake
+    pkg-config    
+    
+    nodejs  
+    python3
+    clang-tools
+    prisma
+    tailwindcss
+    svelte-language-server
+
+    ];
+
+  # Enable the OpenSSH daemon.
+   services.openssh = {
+     enable = true;
+     settings.PermitRootLogin = "no";
+     allowSFTP = true;
+   };
+
+  # System State Version
+  system.stateVersion = "25.11"; # Did you read the comment?
+
+}
+{
+  imports = [
+    ./echo.nix
+  ];
+}
+
+{
+  imports = [
+    ./containers/default.nix
+  ];
+}
+
+# Do not modify this file!  It was generated by ‘nixos-generate-config’
+# and may be overwritten by future invocations.  Please make changes
+# to /etc/nixos/configuration.nix instead.
+{ config, lib, pkgs, modulesPath, ... }:
+
+{
+  imports =
+    [ (modulesPath + "/profiles/qemu-guest.nix")
+    ];
+
+  boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
+
+  fileSystems."/" =
+    { device = "/dev/disk/by-uuid/9972ba1b-90b8-4110-b2a5-7b505bca8fbf";
+      fsType = "ext4";
+    };
+
+  boot.initrd.luks.devices."luks-a0cac57f-da79-43e7-83a1-f0a6d9f65500".device = "/dev/disk/by-uuid/a0cac57f-da79-43e7-83a1-f0a6d9f65500";
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/887C-A1B5";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
+
+  swapDevices = [ ];
+
+  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+  # (the default) this is the recommended approach. When using systemd-networkd it's
+  # still possible to use this option, but it's recommended to use it in conjunction
+  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp1s0.useDHCP = lib.mkDefault true;
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+}
+{ config, inputs, outputs, lib, pkgs, ... }:
+
+{
+ imports = [
+    #./hardware-configuration.nix
+   ../dbochoa77
+   ./configuration.nix
+   ./services/default.nix
+    #inputs.home-manager.nixosModules.home-manager
+];
+
+extraServices.podman.enable = true;
+
+networking.hostName = "nixosServer";
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.dbochoa77 = {
+    isNormalUser = true;
+    description = "dbochoa77";
+    extraGroups = [ "media" "networkmanager" "wheel" "docker" ];
+  };
+
+home-manager = {
+  useUserPackages = true;
+  extraSpecialArgs = { inherit inputs outputs; };
+  users.dbochoa77 = 
+  import ../../home/nixosServer/dbochoa77.nix;  
+ }; 
+}
+{ inputs, ... }: {
+  # This one brings our custom packages from the 'pkgs' directory
+  additions = final: _prev: import ../pkgs { pkgs = final; };
+
+  # This one contains whatever you want to overlay
+  # You can change versions, add patches, set compilation flags, anything really.
+  # https://nixos.wiki/wiki/Overlays
+  modifications = final: prev:
+    {
+      # example = prev.example.overrideAttrs (oldAttrs: rec {
+      # ...
+      # });
+    };
+
+  stable-packages = final: _prev: {
+    stable = import inputs.nixpkgs-stable {
+      system = final.system;
+      config.allowUnfree = true;
+    };
+  };
+}
+
+# Your custom nix-package
+{ pkgs, ... }:
+
+{
+
+}
+{
+  config,
+  lib,
+  outputs,
+  pkgs,
+  ...
+}: {
+ 
+  #  home.stateVersion = "24.05";
+  #  home.username = "dbochoa77";
+  #  home.homeDirectory = "/home/dbochoa77";
+
+
+    nixpkgs = {
+    # Overlays
+    overlays = [
+    outputs.overlays.additions
+    outputs.overlays.modifications
+    outputs.overlays.stable-packages
+
+    ];
+
+    config = {
+    allowUnfree = true;
+
+    allowUnfreePredicate = _: true;
+  };
+};
+
+  nix = {
+    package = lib.mkDefault pkgs.nix;
+    settings = {
+      experimental-features = ["nix-command" "flakes"];
+      warn-dirty = false;
+    };
+  };
+}
+{
+  inputs, 
+  ...
+}:
+
+{
+home.file.".config/nvim" = { 
+    source = "${inputs.dotfiles}/nvim";
+    recursive = true;
+  };
+}
+{ config, lib, pkgs, ... }:
+
+{
+  home.username = lib.mkDefault "dbochoa77";
+  home.homeDirectory = lib.mkDefault "/home/${config.home.username}";
+
+  home.stateVersion = "24.05";
+
+  home.packages = with pkgs; [
+
+    # ────── Core Utilities ──────
+    rsync
+    neovim
+    vim
+    fastfetch
+
+    # ────── File Sync / Backup ──────
+    rclone
+
+    # ────── Networking ──────
+    openssh
+    mosh
+    nmap
+    iproute2
+    wget
+    curl
+    inetutils
+
+    # ────── DevOps & Automation ──────
+    git
+    nix-index
+
+    # ────── NixOS Tools ──────
+    nvd
+    nix-output-monitor
+    nix-tree
+    
+    cowsay
+
+    # Dev Tools
+    nodejs
+    unzip
+
+    # Browser
+    librewolf
+  ];
+
+  home.file = {
+  };
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+  };
+
+  programs.home-manager.enable = true;
+}
+{ config, ... }: { 
+  imports = [ 
+    ../dbochoa77
+    ../features/cli
+    ./home.nix
+    ./dotfiles
+  ]; 
+
+  features = {
+    cli = {
+    fastfetch.enable = true;
+    };
+  };
+}
+
+{
+  config, 
+  lib,
+  ...
+}:
+
+{
+  programs.bash = {
+    enable = true;
+    shellAliases = { 
+      # Basic
+      c = "clear";
+      h = "history";
+      now = "date +%T";
+      grep = "rg";
+      ps = "procs";
+      top = "htop";
+      df = "df -h";
+      du = "du -sh";
+      t = "tree -L 2";
+
+      # File Listing
+      ls = "eza -a --icons --git";
+      la = "exa -la --icons --git";
+      lt = "eza -T --git-ignore --icons";
+  
+      # Directory movement
+      mkdir = "mkdir -p";
+      ".." = "cd ..";
+      "..." = "cd ../../";
+      "...." = "cd ../../../..";
+      ".4" = "cd ../../../../";
+      ".5" = "cd ../../../../../";
+  
+      # Git
+      ga = "git add .";
+      gc = "git commit -";
+      gs = "git status";
+  
+      # Nix config + rebuild
+      nixConfig = "sudo -E nvim /etc/nixos/configuration.nix";
+      rebuild = "sudo nixos-rebuild switch --flake ~/nixosServer#nixosServer && home-manager switch --flake ~/nixosServer#nixosServer";
+  
+      # Neovim (root)
+      v = "sudo -E nvim";
+     };
+     
+    initExtra = ''    
+      cd() {
+        builtin cd "$@" && eza -1A --color=auto;
+      }
+      
+      fastfetch
+      ls -d -- * .*
+    '';
+
+  };
+}
+
+ { config, lib, pkgs, ... }:
+
+{
+  programs.bash.initExtra = ''
+    fastfetch
+  '';
+}
+
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let 
+  cfg = config.features.cli.fastfetch;
+in {
+    options.features.cli.fastfetch.enable = mkEnableOption "enable fastfetch";
+
+    config = mkIf cfg.enable {
+        home.packages = with pkgs; [fastfetch];
+    };
+}
+
+
+{pkgs, ...}: {
+    imports = [
+    ./alias.nix
+    ./fastfetch.nix
+    ./bash_profile.nix
+    ];
+
+
+  programs.eza = {
+    enable = true;
+    enableFishIntegration = true;
+    enableBashIntegration = true;
+    extraOptions = ["-l" "--icons" "--git" "-a"];
+  };
+
+  programs.bat = {enable = true;};
+
+
+
+  home.packages = with pkgs; [
+    coreutils 
+    fd
+    htop
+    httpie
+    jq
+    procs
+    ripgrep
+    tldr
+    zip 
+  ];
+}
+{
+  description = "Configuration for Nixos Server";
+
+ inputs = {
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    
+    dotfiles = {
+    url = "git+https://github.com/dbochoa77/nvim.git";
+    flake = false;
+    };
+  };
+
+  outputs = { 
+	self, 
+	dotfiles,
+	home-manager,
+	nixpkgs,
+	...
+    } @ inputs: let
+      inherit (self) outputs;
+      systems = [
+        "x86_64-linux"
+	"i686-linux"
+        "x86_64-linux"
+        "aarch64-darwin"
+        "x86_64-darwin"
+      ];
+      forAllSystems = nixpkgs.lib.genAttrs systems;
+  
+  in {
+    packages =
+      forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    overlays = import ./overlays {inherit inputs;};
+
+
+    nixosConfigurations = {
+        nixosServer = nixpkgs.lib.nixosSystem {
+	  specialArgs = {inherit inputs outputs;};
+	  modules = [
+	    ./hosts/nixosServer/configuration.nix
+	    #		     ./hosts/nixosServer/hardware-configuration.nix
+	  ];
+	};
+      };
+      homeConfigurations = { 
+        "nixosServer" = home-manager.lib.homeManagerConfiguration {
+	  pkgs = nixpkgs.legacyPackages."x86_64-linux";
+	  extraSpecialArgs = {inherit inputs outputs;};
+	  modules = [./home/nixosServer/dbochoa77.nix];
+	};
+      };
+    };
+} 
