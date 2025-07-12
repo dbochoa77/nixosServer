@@ -60,7 +60,7 @@
       };
       homeConfigurations = { 
         "${host}" = home-manager.lib.homeManagerConfiguration {
-	  pkgs = nixpkgs.legacyPackages.${systems};
+	  pkgs = nixpkgs.legacyPackages.${"x86_64-linux"};
 	  extraSpecialArgs = {inherit inputs outputs;};
 	  modules = [./home/${host}/${user}.nix];
 	};
