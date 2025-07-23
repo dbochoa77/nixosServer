@@ -14,11 +14,13 @@
     outputs.overlays.stable-packages
   ];
 
+    # Allows closed sourced packages
     config = {
     allowUnfree = true;
   };
 };
 
+  # Enables Flakes and nix-command
   nix = {
     package = lib.mkDefault pkgs.nix;
     settings = {

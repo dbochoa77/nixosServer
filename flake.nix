@@ -1,19 +1,32 @@
 {
   description = "Configuration for Nixos Server";
 
- inputs = {
+  # Inputs home-manager
+  # Managing: 
+  # -Neovim Configuration
+  # -Alias
+  # -Fish 
+  # -Bash_profile
+  # -Fastfetch
+  # -Eza 
+  # -Bat
+
+inputs = {
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+  # Unstable/stable Nixos versions
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
 
     # For making declaritive partions
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #disko = {
+    #  url = "github:nix-community/disko";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
+    # Disabled currnelty due to not getting it to work 
 
     # My Neovim configurtion for homemanager
     dotfiles = {
@@ -24,7 +37,7 @@
 
   outputs = { 
 	self, 
-        disko,
+     #  disko,
 	dotfiles,
 	home-manager,
 	nixpkgs,
@@ -54,7 +67,7 @@
 	  specialArgs = {inherit inputs outputs;};
 	  modules = [
 	    ./hosts/${host}/configuration.nix
-	    inputs.disko.nixosModules.disko
+	  # inputs.disko.nixosModules.disko
 	  ];
 	};
       };

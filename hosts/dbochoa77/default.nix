@@ -26,11 +26,13 @@
 
     ];
 
+  # Allows Closed Sourced packages
     config = {
       allowUnfree = true;
     };
   };
 
+  # Experimental Features Nix-command and Flakes
   nix = { 
     settings = {
       experimental-features = ["nix-command" "flakes"];
@@ -40,6 +42,7 @@
       ];
     };
 
+    # Automaticlly Cleans Nixos Generations 30d older
     gc = {
       automatic = true; 
       options = "--delete-older-than 30d";

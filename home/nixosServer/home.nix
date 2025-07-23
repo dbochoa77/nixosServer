@@ -41,8 +41,6 @@
     nodejs
     unzip
 
-    # Browser
-    librewolf
   ];
 
   home.file = {

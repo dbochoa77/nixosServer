@@ -5,7 +5,7 @@
     ./bash_profile.nix
     ];
 
-
+  # Upgraded ls
   programs.eza = {
     enable = true;
     enableFishIntegration = true;
@@ -13,9 +13,8 @@
     extraOptions = ["-l" "--icons" "--git" "-a"];
   };
 
+  # Upgraded cat
   programs.bat = {enable = true;};
-
-
 
   home.packages = with pkgs; [
     coreutils 
