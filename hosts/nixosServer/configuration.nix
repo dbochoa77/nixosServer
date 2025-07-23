@@ -9,12 +9,7 @@
  disko.enableConfig = true;
 
 boot.loader = {
-  systemd-boot.enable = false;
-  grub = {
-    enable = true;
-    efiSupport = true;
-    devices = [ "nodev" ]; # for UEFI systems
-  };
+  systemd-boot.enable = true;
   efi.canTouchEfiVariables = true;
 };
 
