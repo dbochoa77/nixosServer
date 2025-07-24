@@ -6,13 +6,12 @@
       ./hardware-configuration.nix
       #./disko-config.nix
     ];
-  # disko.enableConfig = true;
 
-boot.loader = {
-  systemd-boot.enable = true;
-  efi.canTouchEfiVariables = true;
-};
-
+  boot.loader = {
+   grub.enable = true;
+   grub.device = "/dev/vda";
+   grub.useOSProber = true;
+  };
 
   # Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
